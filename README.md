@@ -104,34 +104,42 @@ Every subscription consists of
     >>> new_user_event
     <ClassSubscriptionList class='__main__.NewUserEvent'>
 
-    >>> new_user_event.subscribe()("1")
-    '1'
-    >>> new_user_event.subscribe()("2")
-    '2'
-    >>> list(new_user_event.get_subscribers())
-    ['1', '2']
+    >>> @new_user_event.subscribe()
+    ... def subscriber1():
+    ...     pass
+    >>> @new_user_event.subscribe()
+    ... def subscriber2():
+    ...     pass
+    >>> list(new_user_event.get_subscribers()) == [subscriber1, subscriber2]
+    True
 
     With an instance you can get the subscription list also.
 
-    >>> list(subscribe.ClassSubscriptionList(NewUserEvent()).subscribers)
-    ['1', '2']
+    >>> list(subscribe.ClassSubscriptionList(NewUserEvent()).subscribers) == [subscriber1, subscriber2]
+    True
 
     A class can have superclasses for which subscription lists are
     defined also.
 
-    >>> subscribe.ClassSubscriptionList(Event).subscribe()("event")
-    'event'
+    >>> event = subscribe.ClassSubscriptionList(Event)
+    >>> @event.subscribe()
+    ... def event_subscriber():
+    ...     pass
     
     You can iterate over all subscribers of
     the class and all superclasses via `get_superclass_subscribers`
 
-    >>> list(subscribe.get_superclass_subscribers(NewUserEvent))
-    ['1', '2', 'event']
+    >>> list(subscribe.get_superclass_subscribers(NewUserEvent)) == [subscriber1, subscriber2, event_subscriber]
+    True
 
     Of course you can use the instance also.
 
-    >>> list(subscribe.get_superclass_subscribers(NewUserEvent()))
-    ['1', '2', 'event']
+    >>> list(subscribe.get_superclass_subscribers(NewUserEvent())) == [subscriber1, subscriber2, event_subscriber]
+    True
+
+    You can also call all subscribers directly.
+    >>> subscribe.call_superclass_subscribers(NewUserEvent())
+
 
 #### Multiple instantiation
 
