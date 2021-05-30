@@ -77,6 +77,20 @@ class Subscription:
     subscriber: Any
 
     def __lt__(self, other):
+        """
+        >>> sl1 = SubscriptionList("1")
+        >>> sl2 = SubscriptionList("2")
+        >>> Subscription(subscription_list=sl1, prio=1, subscriber=None) < Subscription(subscription_list=sl1, prio=2, subscriber=None)
+        True
+        >>> Subscription(subscription_list=sl1, prio=2, subscriber=None) < Subscription(subscription_list=sl1, prio=1, subscriber=None)
+        False
+        >>> Subscription(subscription_list=sl1, prio=1, subscriber=None) < Subscription(subscription_list=sl2, prio=1, subscriber=None)
+        True
+        >>> Subscription(subscription_list=sl2, prio=1, subscriber=None) < Subscription(subscription_list=sl1, prio=1, subscriber=None)
+        False
+        >>> Subscription(subscription_list=sl2, prio=1, subscriber=None) < None
+        True
+        """
         if not isinstance(other, self.__class__):
             return True
         if self.subscription_list.id < other.subscription_list.id:
