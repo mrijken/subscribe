@@ -44,6 +44,11 @@ Every subscription consists of
     >>> [i.__name__ for i in new_user.get_subscribers()]
     ['send_mail']
 
+    You can also use the `subscribers` property.
+
+    >>> [i.__name__ for i in new_user.subscribers]
+    ['send_mail']
+
     Often the subscribers are callables. You can call them all with
     same parameters.
     
@@ -77,7 +82,7 @@ Every subscription consists of
 
     And you can get the strings in the order of the prio.
 
-    >>> ' '.join([i for i in sentence.get_subscribers()])
+    >>> ' '.join(sentence.get_subscribers())
     'Python is a nice language'
 
 ### Advanced Usage
@@ -87,7 +92,9 @@ Every subscription consists of
     An important use case is to subscribe to classes. Ie if
     you have a class NewUserEvent
 
-    >>> class NewUserEvent:
+    >>> class Event:
+    ...     pass
+    >>> class NewUserEvent(Event):
     ...   pass
 
     You can create a class subscription, which will convert the class into
@@ -101,8 +108,30 @@ Every subscription consists of
     '1'
     >>> new_user_event.subscribe()("2")
     '2'
-    >>> [i for i in new_user_event.get_subscribers()]
+    >>> list(new_user_event.get_subscribers())
     ['1', '2']
+
+    With an instance you can get the subscription list also.
+
+    >>> list(subscribe.ClassSubscriptionList(NewUserEvent()).subscribers)
+    ['1', '2']
+
+    A class can have superclasses for which subscription lists are
+    defined also.
+
+    >>> subscribe.ClassSubscriptionList(Event).subscribe()("event")
+    'event'
+    
+    You can iterate over all subscribers of
+    the class and all superclasses via `get_superclass_subscribers`
+
+    >>> list(subscribe.get_superclass_subscribers(NewUserEvent))
+    ['1', '2', 'event']
+
+    Of course you can use the instance also.
+
+    >>> list(subscribe.get_superclass_subscribers(NewUserEvent()))
+    ['1', '2', 'event']
 
 #### Multiple instantiation
 

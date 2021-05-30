@@ -1,4 +1,5 @@
 import dataclasses
+import inspect
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Type
 
 import collections
@@ -36,6 +37,13 @@ class SubscriptionList:
         Iterate over all subscription in order of priority
         """
         yield from self._subscriptions[self.id]
+
+    @property
+    def subscribers(self) -> Iterator[Any]:
+        """
+        Iterate over all subscribers in order of priority
+        """
+        yield from self.get_subscribers()
 
     def get_subscribers(self) -> Iterator[Any]:
         """
@@ -82,8 +90,20 @@ class ClassSubscriptionList(SubscriptionList):
     of a class will be used as id.
     """
 
-    def __init__(self, cls: Type, prefix: str = ""):
+    def __init__(self, cls_or_obj: Any, prefix: str = ""):
+        cls = cls_or_obj if inspect.isclass(cls_or_obj) else cls_or_obj.__class__
+
         super().__init__(f"{prefix}{cls.__module__}.{cls.__qualname__}")
 
     def __repr__(self) -> str:
         return f"<ClassSubscriptionList class='{self.id}'>"
+
+
+def get_superclass_subscribers(cls_or_obj, prefix: str = ""):
+    """
+    Iterate over all classsubscribers of `cls_or_object` and all superclasses in the
+    order of __mro__.
+    """
+    cls = cls_or_obj if inspect.isclass(cls_or_obj) else cls_or_obj.__class__
+    for super_cls in cls.__mro__:
+        yield from ClassSubscriptionList(super_cls, prefix).subscribers
