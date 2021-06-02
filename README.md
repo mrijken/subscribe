@@ -129,16 +129,16 @@ Every subscription consists of
     You can iterate over all subscribers of
     the class and all superclasses via `get_superclass_subscribers`
 
-    >>> list(subscribe.get_superclass_subscribers(NewUserEvent)) == [subscriber1, subscriber2, event_subscriber]
+    >>> list(subscribe.ClassSubscriptionList(NewUserEvent).get_superclass_subscribers()) == [subscriber1, subscriber2, event_subscriber]
     True
 
     Of course you can use the instance also.
 
-    >>> list(subscribe.get_superclass_subscribers(NewUserEvent())) == [subscriber1, subscriber2, event_subscriber]
+    >>> list(subscribe.ClassSubscriptionList(NewUserEvent()).get_superclass_subscribers()) == [subscriber1, subscriber2, event_subscriber]
     True
 
     You can also call all subscribers directly.
-    >>> subscribe.call_superclass_subscribers(NewUserEvent())
+    >>> subscribe.ClassSubscriptionList(NewUserEvent()).call_superclass_subscribers()
 
     When a prefix is used, `partial` can be used to make sure the right prefix is used every time.
 

@@ -98,10 +98,6 @@ class Subscription:
         return self.prio < other.prio
 
 
-def _get_class(cls_or_obj: Any) -> Type:
-    return cls_or_obj if inspect.isclass(cls_or_obj) else cls_or_obj.__class__
-
-
 class ClassSubscriptionList(SubscriptionList):
     """
     A subscription list based on classes; the fully qualified name
@@ -109,29 +105,26 @@ class ClassSubscriptionList(SubscriptionList):
     """
 
     def __init__(self, cls_or_obj: Any, prefix: str = ""):
-        cls = _get_class(cls_or_obj)
+        self.cls = cls_or_obj if inspect.isclass(cls_or_obj) else cls_or_obj.__class__
+        self.prefix = prefix
 
-        super().__init__(f"{prefix}{cls.__module__}.{cls.__qualname__}")
+        super().__init__(f"{self.prefix}{self.cls.__module__}.{self.cls.__qualname__}")
 
     def __repr__(self) -> str:
         return f"<ClassSubscriptionList class='{self.id}'>"
 
+    def get_superclass_subscribers(self):
+        """
+        Iterate over all classsubscribers of self.cls and all superclasses in the
+        order of __mro__.
+        """
+        for super_cls in self.cls.__mro__:
+            yield from ClassSubscriptionList(super_cls, self.prefix).subscribers
 
-def get_superclass_subscribers(cls_or_obj, prefix: str = ""):
-    """
-    Iterate over all classsubscribers of `cls_or_object` and all superclasses in the
-    order of __mro__.
-    """
-    cls = _get_class(cls_or_obj)
-    for super_cls in cls.__mro__:
-        yield from ClassSubscriptionList(super_cls, prefix).subscribers
-
-
-def call_superclass_subscribers(cls_or_obj, prefix: str = "", *args, **kwargs):
-    """
-    Iterate over all classsubscribers of `cls_or_object` and all superclasses in the
-    order of __mro__ and call all subscribers.
-    """
-    cls = _get_class(cls_or_obj)
-    for super_cls in cls.__mro__:
-        ClassSubscriptionList(super_cls, prefix).call_subscribers(*args, **kwargs)
+    def call_superclass_subscribers(self, *args, **kwargs):
+        """
+        Iterate over all classsubscribers of self.cls and all superclasses in the
+        order of __mro__ and call all subscribers.
+        """
+        for super_cls in self.cls.__mro__:
+            ClassSubscriptionList(super_cls, self.prefix).call_subscribers(*args, **kwargs)
