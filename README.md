@@ -140,6 +140,18 @@ Every subscription consists of
     You can also call all subscribers directly.
     >>> subscribe.call_superclass_subscribers(NewUserEvent())
 
+    When a prefix is used, `partial` can be used to make sure the right prefix is used every time.
+
+    >>> import functools
+    >>> PrefixedClassSubscriptionList = functools.partial(subscribe.ClassSubscriptionList, prefix='my_prefix')
+    >>> prefixed_new_user_event = PrefixedClassSubscriptionList(NewUserEvent)
+    >>> @prefixed_new_user_event.subscribe()
+    ... def subscriber3():
+    ...     pass
+    >>> list(prefixed_new_user_event.subscribers) == [subscriber3]
+    True
+
+
 
 #### Multiple instantiation
 
@@ -164,7 +176,7 @@ Every subscription consists of
     
 #### Subclass SubscriptionList
 
-    You can subclass SubscriptionList, like we did for ClassSubscriptionList.
+    You can subclass SubscriptionList, like we did with ClassSubscriptionList.
 
     For example, if you have users.
 
