@@ -110,35 +110,46 @@ Every subscription consists of
     >>> @new_user_event.subscribe()
     ... def subscriber2():
     ...     pass
+
+    You can get the subscribers
+
     >>> list(new_user_event.get_subscribers()) == [subscriber1, subscriber2]
     True
+    >>> list(new_user_event.subscribers) == [subscriber1, subscriber2]
+    True
 
-    With an instance you can get the subscription list also.
+    An instance of the class can also be used to get the subscription list also, so
+    you do not have to carry the subscription list instance throughout your app.
 
     >>> list(subscribe.ClassSubscriptionList(NewUserEvent()).subscribers) == [subscriber1, subscriber2]
     True
 
-    A class can have superclasses for which subscription lists are
-    defined also.
+    A class can have superclasses for which subscription lists are defined also.
 
     >>> event = subscribe.ClassSubscriptionList(Event)
     >>> @event.subscribe()
     ... def event_subscriber():
     ...     pass
-    
-    You can iterate over all subscribers of
-    the class and all superclasses via `get_superclass_subscribers`
 
-    >>> list(subscribe.ClassSubscriptionList(NewUserEvent).get_superclass_subscribers()) == [subscriber1, subscriber2, event_subscriber]
+    The ClassSubscriptionList will not iterate over the subscribers of the superclasses, just
+    over the subscribers of the class. 
+
+    >>> list(new_user_event.subscribers) == [subscriber1, subscriber2]
     True
 
-    Of course you can use the instance also.
+    If you want to iterate over the subscriber of the superclasses also, you can use SuperClassSubscriptionList.
 
-    >>> list(subscribe.ClassSubscriptionList(NewUserEvent()).get_superclass_subscribers()) == [subscriber1, subscriber2, event_subscriber]
+    >>> super_new_user_event = subscribe.SuperClassSubscriptionList(NewUserEvent)
+    >>> super_event = subscribe.SuperClassSubscriptionList(Event)
+
+    Both SuperClassSubscriptionList and ClassSubscriptionList convert the class to the same string 
+    (the dotted name of the class) which is used for the lookup. So an instance of SuperClassSubscriptionList can also 
+    find the subscribers of ClassSubscriptionList.
+
+    >>> list(super_new_user_event.subscribers)  == [subscriber1, subscriber2, event_subscriber]
     True
-
-    You can also call all subscribers directly.
-    >>> subscribe.ClassSubscriptionList(NewUserEvent()).call_superclass_subscribers()
+    >>> list(super_event.subscribers) == [event_subscriber]
+    True
 
     When a prefix is used, `partial` can be used to make sure the right prefix is used every time.
 
@@ -146,9 +157,9 @@ Every subscription consists of
     >>> PrefixedClassSubscriptionList = functools.partial(subscribe.ClassSubscriptionList, prefix='my_prefix')
     >>> prefixed_new_user_event = PrefixedClassSubscriptionList(NewUserEvent)
     >>> @prefixed_new_user_event.subscribe()
-    ... def subscriber3():
+    ... def subscriber5():
     ...     pass
-    >>> list(prefixed_new_user_event.subscribers) == [subscriber3]
+    >>> list(prefixed_new_user_event.subscribers) == [subscriber5]
     True
 
 

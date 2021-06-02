@@ -59,8 +59,8 @@ class SubscriptionList:
 
         Note: This will work only when all subscribers are callables.
         """
-        for subscription in self._subscriptions[self.id]:
-            subscription.subscriber(*args, *kwargs)
+        for subscriber in self.get_subscribers():
+            subscriber(*args, *kwargs)
 
     def __repr__(self) -> str:
         return f"<SubscriptionList id='{self.id}'>"
@@ -113,18 +113,12 @@ class ClassSubscriptionList(SubscriptionList):
     def __repr__(self) -> str:
         return f"<ClassSubscriptionList class='{self.id}'>"
 
-    def get_superclass_subscribers(self):
+
+class SuperClassSubscriptionList(ClassSubscriptionList):
+    def get_subscribers(self):
         """
         Iterate over all classsubscribers of self.cls and all superclasses in the
         order of __mro__.
         """
         for super_cls in self.cls.__mro__:
             yield from ClassSubscriptionList(super_cls, self.prefix).subscribers
-
-    def call_superclass_subscribers(self, *args, **kwargs):
-        """
-        Iterate over all classsubscribers of self.cls and all superclasses in the
-        order of __mro__ and call all subscribers.
-        """
-        for super_cls in self.cls.__mro__:
-            ClassSubscriptionList(super_cls, self.prefix).call_subscribers(*args, **kwargs)
