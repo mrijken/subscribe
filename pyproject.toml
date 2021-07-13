@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "subscribe"
 description = "Library for managing subscriptions"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Marc Rijken <marc@rijken.org>"]
 license = "MIT"
 repository = "https://github.com/mrijken/subscribe"
@@ -11,7 +11,6 @@ packages = [
 ]
 [tool.poetry.dependencies]
 python = ">=3.6.2,<4.0"
-pytest-nlcov = {path = "../newline_coverage", develop =  true}
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
@@ -19,6 +18,7 @@ pylint = "^2.6.0"
 pytest-cov = ">=2.10.1"
 mypy = ">=0.790"
 isort = "^5.6.4"
+pytest-nlcov = ">=0.2.0"
 
 [tool.black]
 line_length = 120
