@@ -1,5 +1,7 @@
 # Subscribe
 
+This package is not maintained anymore.
+
 A simple yet powerfull subscription library in Python for managing subscriptions.
 
 ## Concepts
