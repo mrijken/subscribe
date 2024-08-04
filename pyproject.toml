@@ -1,14 +1,12 @@
 [tool.poetry]
 name = "subscribe"
 description = "Library for managing subscriptions"
-version = "0.6.1"
+version = "0.6.2"
 authors = ["Marc Rijken <marc@rijken.org>"]
 license = "MIT"
 repository = "https://github.com/mrijken/subscribe"
 readme = "README.md"
-packages = [
-    { include = "subscribe" },
-]
+packages = [{ include = "subscribe" }]
 [tool.poetry.dependencies]
 python = ">=3.6.2,<4.0"
 
@@ -34,9 +32,7 @@ known_first_party = ["subscribe"]
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "--doctest-modules --doctest-glob=\"*.md\" --cov=subscribe --cov-report xml:coverage.xml --cov-report term-missing"
-testpaths = [
-    "."
-]
+testpaths = ["."]
 
 [tool.vulture]
 exclude = [".eggs", ".git", ".*cache", ".tox"]
