@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "subscribe"
 description = "Library for managing subscriptions"
-version = "0.6.2"
+version = "0.6.3"
 authors = ["Marc Rijken <marc@rijken.org>"]
 license = "MIT"
 repository = "https://github.com/mrijken/subscribe"
